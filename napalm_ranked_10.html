@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<link rel='icon' type='image/svg+xml' href='data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAzMiAzMic+CiAgPCEtLSBEaXNjIC0tPgogIDxjaXJjbGUgY3g9JzE2JyBjeT0nMTYnIHI9JzE1JyBmaWxsPScjYzlhMjI3Jy8+CiAgPCEtLSBHcm9vdmVzIC0tPgogIDxjaXJjbGUgY3g9JzE2JyBjeT0nMTYnIHI9JzEzJyBmaWxsPSdub25lJyBzdHJva2U9JyMwMDAnIHN0cm9rZS13aWR0aD0nMC42JyBvcGFjaXR5PScwLjMnLz4KICA8Y2lyY2xlIGN4PScxNicgY3k9JzE2JyByPScxMScgZmlsbD0nbm9uZScgc3Ryb2tlPScjMDAwJyBzdHJva2Utd2lkdGg9JzAuNicgb3BhY2l0eT0nMC4zJy8+CiAgPGNpcmNsZSBjeD0nMTYnIGN5PScxNicgcj0nOScgZmlsbD0nbm9uZScgc3Ryb2tlPScjMDAwJyBzdHJva2Utd2lkdGg9JzAuNicgb3BhY2l0eT0nMC4zJy8+CiAgPGNpcmNsZSBjeD0nMTYnIGN5PScxNicgcj0nNycgZmlsbD0nbm9uZScgc3Ryb2tlPScjMDAwJyBzdHJva2Utd2lkdGg9JzAuNicgb3BhY2l0eT0nMC4zJy8+CiAgPCEtLSBMYWJlbCBjZW50ZXIgLS0+CiAgPGNpcmNsZSBjeD0nMTYnIGN5PScxNicgcj0nNC41JyBmaWxsPScjYTA3ODE4Jy8+CiAgPCEtLSBIb2xlIC0tPgogIDxjaXJjbGUgY3g9JzE2JyBjeT0nMTYnIHI9JzEuNScgZmlsbD0nIzA2MDYwNicvPgogIDwhLS0gU2hpbmUgLS0+CiAgPGVsbGlwc2UgY3g9JzExJyBjeT0nMTAnIHJ4PSc0JyByeT0nMi41JyBmaWxsPSdyZ2JhKDI1NSwyNTUsMjU1LDAuMTUpJyB0cmFuc2Zvcm09J3JvdGF0ZSgtMzAgMTEgMTApJy8+Cjwvc3ZnPg=='>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Napalm Corp — Ranked</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg:#060606; --text:#e8e8e8; --sub:rgba(255,255,255,0.35);
+  --sub2:rgba(255,255,255,0.18); --border:rgba(255,255,255,0.07);
+  --card:rgba(255,255,255,0.03); --gold:#c9a227; --orange:#e05d1a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 50% at 10% 20%,rgba(224,93,26,0.06) 0%,transparent 70%),
+             radial-gradient(ellipse 55% 45% at 90% 80%,rgba(201,162,39,0.07) 0%,transparent 70%),
+             radial-gradient(ellipse 40% 50% at 55% 5%,rgba(201,162,39,0.03) 0%,transparent 60%);}
+.screen{display:none;min-height:100vh;position:relative;z-index:1;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* LOGIN */
+#screen-login{align-items:center;justify-content:center;padding:40px 20px;overflow:hidden;}
+.login-glow{position:absolute;width:600px;height:600px;border-radius:50%;filter:blur(160px);pointer-events:none;}
+.login-glow-1{background:#e05d1a;top:-200px;left:-150px;opacity:0.07;}
+.login-glow-2{background:#c9a227;bottom:-200px;right:-150px;opacity:0.07;}
+.login-box{position:relative;z-index:1;width:100%;max-width:380px;text-align:center;}
+.login-logo-title{font-size:36px;font-weight:800;letter-spacing:-2px;color:#fff;}
+.login-logo-sub{font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--sub2);margin-top:6px;margin-bottom:32px;}
+.login-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:14px;}
+.login-users{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.user-btn{display:flex;align-items:center;gap:12px;padding:13px 16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;cursor:pointer;transition:all 0.15s;text-align:left;width:100%;}
+.user-btn:hover{background:rgba(255,255,255,0.06);border-color:rgba(201,162,39,0.3);box-shadow:0 0 20px rgba(201,162,39,0.05);}
+.user-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.user-info{flex:1;min-width:0;}
+.user-name{font-size:13px;font-weight:600;color:#fff;}
+.user-grade{font-size:10px;color:var(--sub);margin-top:1px;}
+.user-xp{font-size:11px;font-weight:700;color:var(--gold);}
+.login-sep{font-size:10px;color:var(--sub2);letter-spacing:2px;margin:16px 0;}
+.login-new{display:flex;gap:8px;margin-bottom:8px;}
+.login-input{flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:#fff;outline:none;font-family:inherit;transition:border-color 0.15s;}
+.login-input:focus{border-color:rgba(201,162,39,0.4);background:rgba(255,255,255,0.06);}
+.login-input::placeholder{color:var(--sub2);}
+.btn-primary{padding:10px 18px;background:var(--gold);color:#000;border:none;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;white-space:nowrap;transition:opacity 0.15s;}
+.btn-primary:hover{opacity:0.85;}
+.login-hint{font-size:10px;color:var(--sub2);margin-top:4px;}
+
+/* PIN */
+.pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(12px);}
+.pin-overlay.active{display:flex;}
+.pin-box{background:#0a0a0a;border:1px solid rgba(201,162,39,0.2);border-radius:24px;padding:36px 32px;width:100%;max-width:320px;text-align:center;box-shadow:0 0 60px rgba(201,162,39,0.06);}
+.pin-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;}
+.pin-sub{font-size:11px;color:var(--sub2);margin-bottom:24px;}
+.pin-dots{display:flex;justify-content:center;gap:14px;margin-bottom:28px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);background:transparent;transition:all 0.15s;}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold);box-shadow:0 0 8px rgba(201,162,39,0.5);}
+.pin-dot.error{background:#e05d1a;border-color:#e05d1a;animation:pinShake 0.3s ease;}
+@keyframes pinShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.pin-key{padding:16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:14px;font-size:20px;font-weight:500;color:#fff;cursor:pointer;transition:all 0.12s;}
+.pin-key:hover{background:rgba(201,162,39,0.1);border-color:rgba(201,162,39,0.3);}
+.pin-key:active{transform:scale(0.93);}
+.pin-key.del{font-size:16px;color:var(--sub);}
+.pin-key.cancel{font-size:11px;color:var(--sub2);letter-spacing:1px;grid-column:span 3;padding:10px;background:transparent;border-color:transparent;}
+.pin-key.cancel:hover{color:rgba(255,255,255,0.4);background:transparent;}
+
+/* TOPBAR */
+.topbar{height:56px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;background:rgba(6,6,6,0.85);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50;}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.topbar-title{font-size:14px;font-weight:800;letter-spacing:-0.5px;color:#fff;}
+.topbar-badge{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);opacity:0.7;border:1px solid rgba(201,162,39,0.3);border-radius:20px;padding:2px 8px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.06);transition:all 0.15s;}
+.topbar-user:hover{border-color:rgba(201,162,39,0.2);background:rgba(201,162,39,0.04);}
+.topbar-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.topbar-username{font-size:12px;color:var(--sub);}
+.btn-logout{font-size:11px;color:var(--sub2);background:none;border:none;cursor:pointer;letter-spacing:1px;}
+.btn-logout:hover{color:rgba(255,255,255,0.5);}
+
+/* LAYOUT */
+#screen-main{flex-direction:column;}
+.main-content{flex:1;display:flex;min-height:calc(100vh - 56px);}
+.rank-sidebar{width:190px;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.05);display:flex;flex-direction:column;padding:20px 0;}
+.snav{display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:12px;color:var(--sub2);cursor:pointer;transition:all 0.15s;border-left:2px solid transparent;margin:1px 0;}
+.snav:hover{color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.03);}
+.snav.active{color:#fff;border-left-color:var(--gold);background:rgba(201,162,39,0.06);}
+.snav-icon{font-size:12px;width:18px;text-align:center;opacity:0.7;}
+.snav-divider{height:1px;background:rgba(255,255,255,0.05);margin:12px 16px;}
+
+/* PAGES */
+.page{display:none;flex:1;padding:32px 36px;overflow-y:auto;}
+.page.active{display:block;}
+.page-title{font-size:22px;font-weight:800;letter-spacing:-0.8px;color:#fff;margin-bottom:4px;}
+.page-sub{font-size:12px;color:var(--sub2);margin-bottom:28px;}
+.sec-title{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-bottom:12px;margin-top:28px;}
+.sec-title:first-child{margin-top:0;}
+
+/* FEED */
+.feed{display:flex;flex-direction:column;gap:10px;}
+.feed-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-left:3px solid transparent;border-radius:18px;padding:20px;transition:all 0.18s;}
+.feed-card:hover{background:rgba(255,255,255,0.04);transform:translateX(3px);}
+.feed-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.feed-vinyl{width:40px;height:40px;flex-shrink:0;}
+.feed-user{flex:1;}
+.feed-username{font-size:13px;font-weight:700;color:#fff;}
+.feed-grade{font-size:10px;color:var(--sub);margin-top:1px;}
+.feed-time{font-size:10px;color:var(--sub2);background:rgba(255,255,255,0.04);padding:3px 9px;border-radius:20px;}
+.feed-track-title{font-size:16px;font-weight:800;letter-spacing:-0.3px;color:#fff;margin-bottom:3px;}
+.feed-track-type{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub2);margin-bottom:10px;}
+.feed-note{font-size:12px;color:var(--sub);line-height:1.65;margin-bottom:14px;padding:10px 14px;background:rgba(255,255,255,0.02);border-radius:10px;border-left:2px solid rgba(255,255,255,0.07);}
+.feed-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.feed-link{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:rgba(255,255,255,0.45);text-decoration:none;padding:6px 14px;border:1px solid rgba(255,255,255,0.08);border-radius:20px;transition:all 0.15s;}
+.feed-link:hover{color:#fff;border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.04);}
+.feed-ratings{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.05);}
+.feed-rating-badge{display:flex;align-items:center;gap:4px;font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);}
+.feed-rating-score{font-weight:800;font-size:12px;}
+.feed-avg{font-size:16px;font-weight:800;margin-left:auto;letter-spacing:-0.5px;}
+.rate-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:20px;border:1px solid rgba(201,162,39,0.3);background:rgba(201,162,39,0.06);font-size:11px;font-weight:600;color:var(--gold);cursor:pointer;transition:all 0.15s;}
+.rate-btn:hover{background:rgba(201,162,39,0.14);border-color:rgba(201,162,39,0.5);}
+.already-rated{font-size:11px;font-weight:600;}
+
+/* POSTER */
+.post-form{max-width:500px;}
+.form-group{margin-bottom:16px;}
+.form-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--sub2);margin-bottom:8px;display:block;}
+.form-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:11px 14px;font-size:13px;color:#fff;outline:none;font-family:inherit;transition:border-color 0.15s;}
+.form-input:focus{border-color:rgba(201,162,39,0.4);background:rgba(255,255,255,0.06);}
+.form-input::placeholder{color:var(--sub2);}
+textarea.form-input{resize:vertical;min-height:70px;}
+.form-submit{width:100%;padding:14px;background:var(--gold);color:#000;border:none;border-radius:14px;font-size:13px;font-weight:800;letter-spacing:1px;cursor:pointer;transition:all 0.15s;margin-top:6px;}
+.form-submit:hover{opacity:0.88;transform:translateY(-1px);}
+
+/* NOTER MODAL */
+.rate-modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(12px);}
+.rate-modal.active{display:flex;}
+.rate-box{background:#0a0a0a;border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:32px;width:100%;max-width:420px;box-shadow:0 40px 80px rgba(0,0,0,0.6);}
+.rate-box-title{font-size:16px;font-weight:800;color:#fff;margin-bottom:4px;letter-spacing:-0.3px;}
+.rate-box-sub{font-size:11px;color:var(--sub2);margin-bottom:20px;}
+.score-picker{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;}
+.score-btn{width:50px;height:50px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:var(--sub);font-size:16px;font-weight:700;cursor:pointer;transition:all 0.12s;}
+.score-btn:hover{border-color:rgba(255,255,255,0.2);color:#fff;background:rgba(255,255,255,0.06);transform:translateY(-2px);}
+.score-btn.selected{color:#000;border-color:transparent;transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,0.4);}
+.xp-preview{background:rgba(201,162,39,0.08);border:1px solid rgba(201,162,39,0.2);border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--gold);}
+.xp-preview-val{font-size:20px;font-weight:800;color:#fff;}
+.rate-actions{display:flex;gap:8px;}
+.btn-cancel{flex:1;padding:12px;background:transparent;color:var(--sub);border:1px solid rgba(255,255,255,0.08);border-radius:12px;font-size:12px;cursor:pointer;transition:all 0.15s;}
+.btn-cancel:hover{color:#fff;border-color:rgba(255,255,255,0.2);}
+.btn-confirm{flex:2;padding:12px;background:var(--gold);color:#000;border:none;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;transition:all 0.15s;}
+.btn-confirm:hover{opacity:0.88;}
+
+/* PROFIL */
+.profile-hero{display:flex;align-items:center;gap:28px;margin-bottom:28px;padding:28px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:20px;}
+.profile-grade-display{flex-shrink:0;text-align:center;}
+.grade-vinyl{width:120px;height:120px;}
+.grade-name-display{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-top:8px;}
+.grade-sub-display{font-size:10px;color:var(--sub2);margin-top:2px;}
+.profile-stats{flex:1;}
+.profile-name{font-size:28px;font-weight:800;letter-spacing:-1px;color:#fff;margin-bottom:4px;}
+.profile-xp-label{font-size:11px;color:var(--sub);letter-spacing:1px;margin-bottom:12px;}
+.xp-bar-wrap{background:rgba(255,255,255,0.06);border-radius:100px;height:6px;margin-bottom:6px;overflow:hidden;}
+.xp-bar-fill{height:100%;border-radius:100px;transition:width 0.8s cubic-bezier(.4,0,.2,1);}
+.xp-bar-label{display:flex;justify-content:space-between;font-size:10px;color:var(--sub2);}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px;}
+.stat-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px;text-align:center;}
+.stat-val{font-size:26px;font-weight:200;color:#fff;letter-spacing:-0.5px;}
+.stat-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--sub2);margin-top:3px;}
+
+/* GRADES */
+.grades-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;}
+.grade-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:18px;display:flex;align-items:center;gap:14px;transition:all 0.2s;}
+.grade-card:hover{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.12);transform:translateY(-2px);}
+.grade-card.locked{opacity:0.3;}
+.grade-vinyl-sm{width:58px;height:58px;flex-shrink:0;}
+.grade-card-name{font-size:13px;font-weight:700;margin-bottom:2px;}
+.grade-card-sub{font-size:10px;color:var(--sub2);margin-bottom:6px;}
+.grade-card-range{font-size:11px;color:var(--sub);}
+.grade-card-status{font-size:10px;margin-top:5px;}
+.badge-unlocked{color:#2ecc71;}
+.badge-current{color:var(--gold);}
+.badge-locked{color:var(--sub2);}
+
+/* LEADERBOARD */
+.lb-list{display:flex;flex-direction:column;gap:6px;}
+.lb-item{display:flex;align-items:center;gap:14px;padding:14px 18px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:14px;transition:all 0.15s;}
+.lb-item:hover{background:rgba(255,255,255,0.04);}
+.lb-item.me{border-color:rgba(201,162,39,0.3);background:rgba(201,162,39,0.04);}
+.lb-item.top1{border-color:rgba(201,162,39,0.5);background:linear-gradient(90deg,rgba(201,162,39,0.1),transparent);}
+.lb-item.top2{border-color:rgba(160,168,176,0.3);background:linear-gradient(90deg,rgba(160,168,176,0.06),transparent);}
+.lb-item.top3{border-color:rgba(200,121,65,0.3);background:linear-gradient(90deg,rgba(200,121,65,0.06),transparent);}
+.lb-rank{font-size:15px;font-weight:800;width:28px;text-align:center;}
+.lb-rank.gold{color:#c9a227;}
+.lb-rank.silver{color:#a0a8b0;}
+.lb-rank.bronze{color:#c87941;}
+.lb-rank.normal{color:var(--sub2);font-size:11px;font-weight:500;}
+.lb-vinyl{width:36px;height:36px;flex-shrink:0;}
+.lb-info{flex:1;}
+.lb-name{font-size:13px;font-weight:700;color:#fff;}
+.lb-grade{font-size:10px;color:var(--sub);margin-top:1px;}
+.lb-xp{font-size:14px;font-weight:800;}
+
+/* EMPTY + LOADING */
+.empty{text-align:center;padding:60px 20px;color:var(--sub2);font-size:13px;}
+.empty-icon{font-size:40px;margin-bottom:14px;opacity:0.25;}
+.loading{text-align:center;padding:40px;color:var(--sub2);font-size:10px;letter-spacing:4px;text-transform:uppercase;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--gold);color:#000;padding:11px 22px;border-radius:100px;font-size:12px;font-weight:700;opacity:0;transition:all 0.3s ease;pointer-events:none;white-space:nowrap;z-index:999;box-shadow:0 8px 24px rgba(201,162,39,0.3);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* GRADE UP */
+.gradeup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(16px);}
+.gradeup-overlay.active{display:flex;animation:guFadeIn 0.4s ease;}
+@keyframes guFadeIn{from{opacity:0}to{opacity:1}}
+.gradeup-box{text-align:center;position:relative;}
+.gradeup-vinyl{animation:guVinyl 0.8s cubic-bezier(.34,1.56,.64,1) 0.2s both;}
+@keyframes guVinyl{from{opacity:0;transform:scale(0.4) rotate(-20deg)}to{opacity:1;transform:scale(1) rotate(0deg)}}
+.gradeup-label{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--sub2);margin-top:20px;margin-bottom:8px;animation:guFadeUp 0.5s ease 0.6s both;}
+.gradeup-name{font-size:32px;font-weight:800;letter-spacing:-1px;margin-bottom:4px;animation:guFadeUp 0.5s ease 0.7s both;}
+.gradeup-sub{font-size:14px;font-weight:300;color:var(--sub);margin-bottom:32px;animation:guFadeUp 0.5s ease 0.8s both;}
+.gradeup-btn{padding:12px 36px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:#fff;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:2px;cursor:pointer;transition:all 0.2s;animation:guFadeUp 0.5s ease 1s both;}
+.gradeup-btn:hover{background:rgba(255,255,255,0.08);}
+@keyframes guFadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.gradeup-particles{position:absolute;inset:0;pointer-events:none;}
+
+/* DELETE PROFIL */
+.user-btn-wrap{position:relative;display:flex;align-items:center;gap:0;}
+.user-delete{width:32px;height:32px;background:transparent;border:none;color:rgba(255,255,255,0.15);font-size:16px;cursor:pointer;border-radius:8px;transition:all 0.15s;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.user-delete:hover{color:#e05d1a;background:rgba(224,93,26,0.1);}
+
+/* INTRO */
+#screen-intro{align-items:center;justify-content:center;padding:40px 24px;overflow:hidden;min-height:100vh;}
+.intro-glow{position:fixed;border-radius:50%;filter:blur(180px);pointer-events:none;}
+.intro-glow-1{width:70vw;height:60vh;background:#e05d1a;top:-20vh;left:-15vw;opacity:0.07;animation:introBreath 8s ease-in-out infinite;}
+.intro-glow-2{width:60vw;height:55vh;background:#c9a227;bottom:-20vh;right:-10vw;opacity:0.07;animation:introBreath 8s ease-in-out 4s infinite;}
+@keyframes introBreath{0%,100%{opacity:0.07}50%{opacity:0.13}}
+.intro-wrap{position:relative;z-index:1;width:100%;max-width:520px;text-align:center;}
+
+/* Logo intro */
+.intro-logo{margin-bottom:48px;animation:introFadeUp 0.8s ease 0.1s both;}
+.intro-logo-eyebrow{font-size:9px;letter-spacing:6px;text-transform:uppercase;color:var(--sub2);margin-bottom:16px;}
+.intro-logo-title{font-size:clamp(44px,10vw,80px);font-weight:800;letter-spacing:-3px;color:#fff;line-height:0.95;}
+.intro-logo-title span{color:var(--gold);}
+.intro-logo-sub{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--sub2);margin-top:12px;font-weight:300;}
+
+/* Vinyl déco */
+.intro-vinyl-row{display:flex;justify-content:center;align-items:flex-end;gap:16px;margin-bottom:48px;animation:introFadeUp 0.8s ease 0.4s both;}
+.intro-vinyl-item{text-align:center;}
+.intro-vinyl-item svg{display:block;margin:0 auto;}
+.intro-vinyl-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--sub2);margin-top:6px;opacity:0.6;}
+
+/* Concept */
+.intro-concept{margin-bottom:48px;animation:introFadeUp 0.8s ease 0.7s both;}
+.intro-steps{display:flex;flex-direction:column;gap:12px;text-align:left;}
+.intro-step{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;}
+.intro-step-num{font-size:11px;font-weight:800;color:var(--gold);width:20px;flex-shrink:0;margin-top:1px;}
+.intro-step-text{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5;}
+.intro-step-text b{color:#fff;font-weight:700;}
+
+/* CTA */
+.intro-cta{animation:introFadeUp 0.8s ease 1s both;}
+.intro-btn{display:inline-block;padding:16px 48px;background:var(--gold);color:#000;border:none;border-radius:100px;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;box-shadow:0 8px 32px rgba(201,162,39,0.25);}
+.intro-btn:hover{opacity:0.9;transform:translateY(-2px);box-shadow:0 12px 40px rgba(201,162,39,0.35);}
+.intro-skip{display:block;margin-top:14px;font-size:10px;color:var(--sub2);letter-spacing:2px;cursor:pointer;transition:color 0.2s;}
+.intro-skip:hover{color:rgba(255,255,255,0.4);}
+
+@keyframes introFadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div class="screen active" id="screen-intro">
+  <div class="intro-glow intro-glow-1"></div>
+  <div class="intro-glow intro-glow-2"></div>
+  <div class="intro-wrap">
+
+    <div class="intro-logo">
+      <div class="intro-logo-eyebrow">Napalm Corp</div>
+      <div class="intro-logo-title">Napalm<span>Ranked</span></div>
+      <div class="intro-logo-sub">Note · Progresse · Domine</div>
+    </div>
+
+    <div class="intro-vinyl-row" id="introVinyls"></div>
+
+    <div class="intro-concept">
+      <div class="intro-steps">
+        <div class="intro-step">
+          <div class="intro-step-num">01</div>
+          <div class="intro-step-text"><b>Poste ton son.</b> Colle un lien SoundCloud ou YouTube. Tout le monde peut écouter.</div>
+        </div>
+        <div class="intro-step">
+          <div class="intro-step-num">02</div>
+          <div class="intro-step-text"><b>Note les tracks des autres.</b> De 1 à 10, honnêtement. Chaque note te rapporte des XP.</div>
+        </div>
+        <div class="intro-step">
+          <div class="intro-step-num">03</div>
+          <div class="intro-step-text"><b>Monte en grade.</b> Commence <span style="color:#5a5a5a;font-weight:700">Broke Ass</span>. Vise <span style="color:#c9a227;font-weight:700">King Von</span>. Le reste c'est du travail.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="intro-cta">
+      <button class="intro-btn" onclick="enterApp()">Entrer</button>
+      <span class="intro-skip" onclick="enterApp()">J'ai déjà un profil →</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="screen" id="screen-login">
+  <div class="login-glow login-glow-1"></div>
+  <div class="login-glow login-glow-2"></div>
+  <div class="login-box">
+    <div class="login-logo-title">Napalm<b>Ranked</b></div>
+    <div class="login-logo-sub">Track your progression</div>
+    <div id="users-section">
+      <div class="login-label">Choisir un profil</div>
+      <div class="login-users" id="usersList"><div class="loading">CHARGEMENT...</div></div>
+    </div>
+    <div class="login-sep">— ou créer un profil —</div>
+    <div class="login-new">
+      <input class="login-input" type="text" id="newUsername" placeholder="Pseudo..." maxlength="20">
+      <input class="login-input" type="password" id="newPin" placeholder="PIN x4" maxlength="4" inputmode="numeric" style="max-width:90px">
+      <button class="btn-primary" onclick="createUser()">Créer</button>
+    </div>
+    <div class="login-hint">Le PIN protège ton profil</div>
+  </div>
+</div>
+
+<!-- PIN OVERLAY -->
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-box">
+    <div class="pin-title" id="pinTitle">Entrer le PIN</div>
+    <div class="pin-sub" id="pinSub">4 chiffres</div>
+    <div class="pin-dots" id="pinDots">
+      <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-keypad">
+      <div class="pin-key" onclick="pinPress('1')">1</div><div class="pin-key" onclick="pinPress('2')">2</div><div class="pin-key" onclick="pinPress('3')">3</div>
+      <div class="pin-key" onclick="pinPress('4')">4</div><div class="pin-key" onclick="pinPress('5')">5</div><div class="pin-key" onclick="pinPress('6')">6</div>
+      <div class="pin-key" onclick="pinPress('7')">7</div><div class="pin-key" onclick="pinPress('8')">8</div><div class="pin-key" onclick="pinPress('9')">9</div>
+      <div class="pin-key del" onclick="pinDel()">⌫</div><div class="pin-key" onclick="pinPress('0')">0</div>
+      <div class="pin-key cancel" onclick="pinCancel()">Annuler</div>
+    </div>
+  </div>
+</div>
+
+<!-- RATE MODAL -->
+<div class="rate-modal" id="rateModal">
+  <div class="rate-box">
+    <div class="rate-box-title" id="rateModalTitle">Noter</div>
+    <div class="rate-box-sub" id="rateModalSub">Écoute le track, puis note honnêtement.</div>
+    <div class="score-picker" id="rateScorePicker"></div>
+    <div class="xp-preview"><span>XP gagné</span><span class="xp-preview-val" id="rateXpPreview">—</span></div>
+    <div class="rate-actions">
+      <button class="btn-cancel" onclick="closeRateModal()">Annuler</button>
+      <button class="btn-confirm" onclick="submitRating()">Valider</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="screen" id="screen-main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="index.html" style="display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.28);text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.28)'">
+        <span style="display:inline-block;width:18px;height:1px;background:currentColor"></span>Napalm Corp
+      </a>
+      <span class="topbar-title">NapalmRanked</span>
+      <span class="topbar-badge">Beta</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="topbarAvatar"></div>
+        <span class="topbar-username" id="topbarUsername"></span>
+      </div>
+      <button class="btn-logout" onclick="logout()">Quitter</button>
+    </div>
+  </div>
+  <div class="main-content">
+    <div class="rank-sidebar">
+      <div class="snav active" onclick="showPage('feed',this)"><span class="snav-icon">◈</span>Fil d'activité</div>
+      <div class="snav" onclick="showPage('post',this)"><span class="snav-icon">✦</span>Poster un track</div>
+      <div class="snav-divider"></div>
+      <div class="snav" onclick="showPage('profile',this)"><span class="snav-icon">◉</span>Mon Profil</div>
+      <div class="snav" onclick="showPage('grades',this)"><span class="snav-icon">▤</span>Grades</div>
+      <div class="snav" onclick="showPage('leaderboard',this)"><span class="snav-icon">▲</span>Classement</div>
+    </div>
+
+    <!-- FIL -->
+    <div class="page active" id="page-feed">
+      <div class="page-title">Fil d'activité</div>
+      <div class="page-sub">Les tracks postés par la communauté. Écoute et note.</div>
+      <div class="feed" id="feedList"><div class="loading">CHARGEMENT...</div></div>
+    </div>
+
+    <!-- POSTER -->
+    <div class="page" id="page-post">
+      <div class="page-title">Poster un track</div>
+      <div class="page-sub">Partage ton son avec la communauté.</div>
+      <div class="post-form">
+        <div class="form-group">
+          <label class="form-label">Titre du track</label>
+          <input class="form-input" type="text" id="postTitle" placeholder="ex: Session 01 — Hook...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Type</label>
+          <select class="form-input" id="postType">
+            <option value="vocal">Track vocale (voix + beat)</option>
+            <option value="beat">Beat instrumental</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lien du son</label>
+          <input class="form-input" type="url" id="postLink" placeholder="SoundCloud, YouTube, Google Drive...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Note (optionnel)</label>
+          <textarea class="form-input" id="postNote" placeholder="Ce que tu voulais tester, ce que t'as travaillé..."></textarea>
+        </div>
+        <button class="form-submit" onclick="postTrack()">Poster sur le fil</button>
+      </div>
+    </div>
+
+    <!-- PROFIL -->
+    <div class="page" id="page-profile">
+      <div class="profile-hero">
+        <div class="profile-grade-display">
+          <div class="grade-vinyl" id="profileVinyl"></div>
+          <div class="grade-name-display" id="profileGradeName"></div>
+          <div class="grade-sub-display" id="profileGradeSub"></div>
+        </div>
+        <div class="profile-stats">
+          <div class="profile-name" id="profileName"></div>
+          <div class="profile-xp-label" id="profileXpLabel"></div>
+          <div class="xp-bar-wrap"><div class="xp-bar-fill" id="profileXpBar"></div></div>
+          <div class="xp-bar-label"><span id="xpCurrent"></span><span id="xpNext"></span></div>
+          <div class="stats-grid">
+            <div class="stat-card"><div class="stat-val" id="statTracks">0</div><div class="stat-lbl">Tracks postés</div></div>
+            <div class="stat-card"><div class="stat-val" id="statRatings">0</div><div class="stat-lbl">Notes données</div></div>
+            <div class="stat-card"><div class="stat-val" id="statXP">0</div><div class="stat-lbl">XP total</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="sec-title">Mes tracks</div>
+      <div id="profileTracksList"></div>
+    </div>
+
+    <!-- GRADES -->
+    <div class="page" id="page-grades">
+      <div class="page-title">Système de grades</div>
+      <div class="page-sub">Du plus humble au plus redouté. Chaque grade a 4 sous-niveaux.</div>
+      <div class="grades-grid" id="gradesGrid"></div>
+    </div>
+
+    <!-- LB -->
+    <div class="page" id="page-leaderboard">
+      <div class="page-title">Classement</div>
+      <div class="page-sub">Tous les producteurs Napalm Corp.</div>
+      <div class="lb-list" id="leaderboardList"><div class="loading">CHARGEMENT...</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- GRADE UP -->
+<div class="gradeup-overlay" id="gradeupOverlay" onclick="closeGradeUp()">
+  <div class="gradeup-box">
+    <div class="gradeup-vinyl" id="gradeupVinyl"></div>
+    <div class="gradeup-label">Grade up !</div>
+    <div class="gradeup-name" id="gradeupName"></div>
+    <div class="gradeup-sub" id="gradeupSub"></div>
+    <button class="gradeup-btn" onclick="closeGradeUp()">Continuer</button>
+  </div>
+</div>
+
+<script>
+// ═══ CONFIG SUPABASE ═══
+const SUPA_URL = 'https://fyvybltxjneiujzugsso.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5dnlibHR4am5laXVqenVnc3NvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1NTU4NzIsImV4cCI6MjA5ODEzMTg3Mn0.1W3304cU44UG3aB7IIGIQqyITAbke3tpDIU5WmdBDJA';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// ═══ GRADES ═══
+const GRADES = [
+  { id:'broke',      name:'Broke Ass',         color:'#5a5a5a', subs:['I','II','III','IV'], xpRanges:[[0,99],[100,249],[250,449],[450,699]], desc:'T\'as pas encore prouvé grand chose', vinylState:'shattered' },
+  { id:'soundcloud', name:'Rappeur SoundCloud', color:'#e05d1a', subs:['I','II','III','IV'], xpRanges:[[700,999],[1000,1399],[1400,1899],[1900,2499]], desc:'Les premiers signes de vie', vinylState:'cracked' },
+  { id:'sacem',      name:'SACEM Maxing',       color:'#c8a96e', subs:['I','II','III','IV'], xpRanges:[[2500,3499],[3500,4699],[4700,6099],[6100,7699]], desc:'T\'as commencé à comprendre le jeu', vinylState:'normal' },
+  { id:'spotify',    name:'Spotify',            color:'#1db954', subs:['I','II','III','IV'], xpRanges:[[7700,9999],[10000,12999],[13000,16499],[16500,20499]], desc:'L\'algo commence à te connaître', vinylState:'bronze' },
+  { id:'kingvon',    name:'King Von',           color:'#c9a227', subs:['I','II','III','IV'], xpRanges:[[20500,25999],[26000,32499],[32500,39999],[40000,Infinity]], desc:'Niveau légende. Peu y arrivent.', vinylState:'gold' }
+];
+
+function getGrade(xp) {
+  for (const g of GRADES)
+    for (let s=0; s<g.subs.length; s++)
+      if (xp >= g.xpRanges[s][0] && xp <= g.xpRanges[s][1])
+        return { grade:g, sub:g.subs[s], subIdx:s };
+  return { grade:GRADES[4], sub:'IV', subIdx:3 };
+}
+function getNextThreshold(xp) {
+  for (const g of GRADES)
+    for (let s=0; s<g.subs.length; s++)
+      if (xp >= g.xpRanges[s][0] && xp <= g.xpRanges[s][1])
+        return g.xpRanges[s][1] === Infinity ? null : g.xpRanges[s][1]+1;
+  return null;
+}
+function xpForScore(score) { return Math.round((score*score/2)+(score*3)); }
+function scoreColor(score) {
+  if (score<=3) return {bg:'#5a5a5a',text:'#fff'};
+  if (score<=5) return {bg:'#e05d1a',text:'#fff'};
+  if (score<=7) return {bg:'#c8a96e',text:'#000'};
+  if (score<=9) return {bg:'#1db954',text:'#000'};
+  return {bg:'#c9a227',text:'#000'};
+}
+
+// ═══ VINYL SVG ═══
+function vinylSVG(state, color, size=110) {
+  const c=size/2, r=size/2-3;
+  const op={shattered:0.3,cracked:0.5,normal:0.75,bronze:0.88,gold:1}[state]||0.75;
+  const grooves=[0.88,0.76,0.64,0.52].map(f=>`<circle cx="${c}" cy="${c}" r="${r*f}" fill="none" stroke="${color}" stroke-width="0.7" opacity="${op*0.5}"/>`).join('');
+  const cracks = (state==='shattered'||state==='cracked') ? `
+    <line x1="${c}" y1="${c}" x2="${c-r*0.6}" y2="${c-r*0.45}" stroke="rgba(0,0,0,0.7)" stroke-width="${state==='shattered'?2:1.2}" opacity="0.8"/>
+    <line x1="${c}" y1="${c}" x2="${c+r*0.5}" y2="${c-r*0.5}" stroke="rgba(0,0,0,0.5)" stroke-width="1.5" opacity="0.7"/>
+    <line x1="${c}" y1="${c}" x2="${c+r*0.3}" y2="${c+r*0.65}" stroke="rgba(0,0,0,0.4)" stroke-width="1" opacity="0.6"/>
+    ${state==='shattered'?`<line x1="${c}" y1="${c}" x2="${c-r*0.7}" y2="${c+r*0.3}" stroke="rgba(0,0,0,0.5)" stroke-width="1.5" opacity="0.7"/>`:''}`:'';
+  const gid='g'+Math.random().toString(36).slice(2,6);
+  const shine=(state==='bronze'||state==='gold')?`<defs><radialGradient id="${gid}" cx="35%" cy="30%" r="60%"><stop offset="0%" stop-color="rgba(255,255,255,0.22)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><circle cx="${c}" cy="${c}" r="${r}" fill="url(#${gid})"/>`:'';
+  return `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="${c}" cy="${c}" r="${r}" fill="${color}" opacity="${op}"/>
+    ${grooves}<circle cx="${c}" cy="${c}" r="${r*0.2}" fill="${color}" opacity="${Math.min(1,op+0.1)}"/>
+    <circle cx="${c}" cy="${c}" r="${r*0.07}" fill="rgba(0,0,0,0.6)"/>
+    <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${color}" stroke-width="1.8" opacity="${op*0.9}"/>
+    ${cracks}${shine}</svg>`;
+}
+
+// ═══ AUTH STATE ═══
+let currentUser = null;
+
+function setCurrentUser(u) {
+  currentUser = u;
+  if (u) sessionStorage.setItem('nc_user', JSON.stringify(u));
+  else sessionStorage.removeItem('nc_user');
+}
+
+// ═══ LOAD USERS ═══
+async function loadUsers() {
+  const { data, error } = await sb.from('users').select('id,name,xp').order('xp',{ascending:false});
+  if (error) { console.error('loadUsers:', error.message); return; }
+  const list = document.getElementById('usersList');
+  if (!data.length) { list.innerHTML='<div style="color:var(--sub2);font-size:12px;text-align:center;padding:8px">Aucun profil — crée le premier !</div>'; return; }
+  list.innerHTML = data.map(u => {
+    const g = getGrade(u.xp||0);
+    return `<div class="user-btn-wrap">
+      <button class="user-btn" onclick="loginAs('${u.id}','${u.name}')" style="flex:1">
+        <div class="user-avatar">${vinylSVG(g.grade.vinylState,g.grade.color,36)}</div>
+        <div class="user-info"><div class="user-name">${u.name}</div><div class="user-grade">${g.grade.name} ${g.sub}</div></div>
+        <div class="user-xp">${u.xp||0} XP</div>
+      </button>
+      <button class="user-delete" onclick="deleteUser('${u.id}','${u.name}')" title="Supprimer">✕</button>
+    </div>`;
+  }).join('');
+}
+
+// ═══ CREATE USER ═══
+async function createUser() {
+  const name = document.getElementById('newUsername').value.trim();
+  const pin = document.getElementById('newPin').value.trim();
+  if (!name) { showToast('Entre un pseudo'); return; }
+  if (!/^\d{4}$/.test(pin)) { showToast('PIN = 4 chiffres'); return; }
+  const { data:exists } = await sb.from('users').select('id').eq('name',name).maybeSingle();
+  if (exists) { showToast('Pseudo déjà pris'); return; }
+  const { data, error } = await sb.from('users').insert({name,pin,xp:0}).select().single();
+  if (error) { showToast('Erreur création'); console.error('createUser:', error.message); return; }
+  document.getElementById('newUsername').value='';
+  document.getElementById('newPin').value='';
+  showToast('Profil créé !');
+  loadUsers();
+}
+
+// ═══ PIN SYSTEM ═══
+let pinTargetId=null, pinTargetName=null, pinInput='', pinMode='check', pinFirst='';
+
+function loginAs(id,name) {
+  pinTargetId=id; pinTargetName=name; pinInput=''; pinFirst='';
+  document.getElementById('pinTitle').textContent=name;
+  document.getElementById('pinSub').textContent='Entre ton PIN';
+  pinMode='check';
+  updatePinDots();
+  document.getElementById('pinOverlay').classList.add('active');
+}
+
+function pinPress(d) {
+  if(pinInput.length>=4) return;
+  pinInput+=d; updatePinDots();
+  if(pinInput.length===4) setTimeout(handlePin,120);
+}
+function pinDel(){ pinInput=pinInput.slice(0,-1); updatePinDots(); }
+function pinCancel(){ pinInput='';pinFirst='';pinTargetId=null; document.getElementById('pinOverlay').classList.remove('active'); updatePinDots(); }
+function updatePinDots(){ for(let i=0;i<4;i++){const d=document.getElementById('pd'+i);d.classList.toggle('filled',i<pinInput.length);d.classList.remove('error');} }
+
+async function handlePin() {
+  if(pinMode==='check') {
+    const {data,error} = await sb.from('users').select('*').eq('id',pinTargetId).single();
+    if(error||!data){pinCancel();return;}
+    if(pinInput===data.pin) {
+      document.getElementById('pinOverlay').classList.remove('active');
+      setCurrentUser(data);
+      showScreen('screen-main');
+      renderApp();
+    } else {
+      for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.add('error');
+      setTimeout(()=>{pinInput='';updatePinDots();showToast('PIN incorrect');},600);
+    }
+  } else if(pinMode==='create') {
+    pinFirst=pinInput; pinInput='';
+    document.getElementById('pinSub').textContent='Confirme ton PIN';
+    pinMode='confirm'; updatePinDots();
+  } else if(pinMode==='confirm') {
+    if(pinInput===pinFirst) {
+      const {error}=await sb.from('users').update({pin:pinFirst}).eq('id',pinTargetId);
+      if(error){showToast('Erreur');return;}
+      const {data}=await sb.from('users').select('*').eq('id',pinTargetId).single();
+      document.getElementById('pinOverlay').classList.remove('active');
+      setCurrentUser(data);
+      showScreen('screen-main');
+      showToast('PIN créé !');
+      renderApp();
+    } else {
+      for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.add('error');
+      setTimeout(()=>{pinInput='';pinFirst='';pinMode='create';document.getElementById('pinSub').textContent='PIN différent — réessaie';updatePinDots();},600);
+    }
+  }
+}
+
+function logout() {
+  setCurrentUser(null);
+  showScreen('screen-intro');
+  initIntroVinyls();
+}
+
+// ═══ DELETE USER ═══
+async function deleteUser(id, name) {
+  if (!confirm(`Supprimer le profil "${name}" ? Toutes les données seront perdues.`)) return;
+  const { error } = await sb.from('users').delete().eq('id', id);
+  if (error) { showToast('Erreur suppression'); return; }
+  showToast('Profil supprimé');
+  loadUsers();
+}
+
+// ═══ GRADE UP ═══
+function showGradeUp(grade, sub) {
+  document.getElementById('gradeupVinyl').innerHTML = vinylSVG(grade.vinylState, grade.color, 160);
+  document.getElementById('gradeupName').textContent = grade.name + ' ' + sub;
+  document.getElementById('gradeupName').style.color = grade.color;
+  document.getElementById('gradeupSub').textContent = grade.desc;
+  document.getElementById('gradeupOverlay').classList.add('active');
+}
+function closeGradeUp() {
+  document.getElementById('gradeupOverlay').classList.remove('active');
+}
+function showPage(id,btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.snav').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(id==='feed') renderFeed();
+  if(id==='profile') renderProfile();
+  if(id==='grades') renderGrades();
+  if(id==='leaderboard') renderLeaderboard();
+}
+
+// ═══ FIL D'ACTIVITÉ ═══
+async function renderFeed() {
+  const el=document.getElementById('feedList');
+  el.innerHTML='<div class="loading">CHARGEMENT...</div>';
+  const {data:tracks,error}=await sb.from('tracks').select(`*,ratings(*)`).order('created_at',{ascending:false}).limit(50);
+  if(error){el.innerHTML='<div class="empty"><div class="empty-icon">◎</div>Erreur de chargement</div>';return;}
+  if(!tracks.length){el.innerHTML='<div class="empty"><div class="empty-icon">◈</div>Aucun track posté pour l\'instant.<br>Sois le premier !</div>';return;}
+
+  el.innerHTML=tracks.map(t=>{
+    const ratings=t.ratings||[];
+    const avg=ratings.length?(ratings.reduce((a,r)=>a+r.score,0)/ratings.length).toFixed(1):null;
+    const myRating=ratings.find(r=>r.user_id===currentUser.id);
+    const isOwn=t.user_id===currentUser.id;
+    const g=getGrade(0); // on a pas le xp ici, on récupère juste le grade de base pour l'affichage
+    const timeAgo=formatTime(t.created_at);
+
+    const ratingBadges=ratings.slice(0,5).map(r=>{
+      const sc=scoreColor(r.score);
+      return `<span class="feed-rating-badge"><span class="feed-rating-score" style="color:${sc.bg}">${r.score}</span><span style="color:var(--sub2)">${r.user_name}</span></span>`;
+    }).join('');
+
+    return `<div class="feed-card" id="track-${t.id}">
+      <div class="feed-header">
+        <div class="feed-vinyl">${vinylSVG('normal','#5a5a5a',36)}</div>
+        <div class="feed-user">
+          <div class="feed-username">${t.user_name}</div>
+          <div class="feed-grade">${t.type==='vocal'?'Track vocale':'Beat instrumental'}</div>
+        </div>
+        <div class="feed-time">${timeAgo}</div>
+      </div>
+      <div class="feed-track-title">${t.title}</div>
+      ${t.note?`<div class="feed-note">${t.note}</div>`:''}
+      <div class="feed-actions">
+        ${t.link?`<a class="feed-link" href="${t.link}" target="_blank" rel="noopener">▶ Écouter</a>`:''}
+        ${!isOwn&&!myRating?`<button class="rate-btn" onclick="openRateModal('${t.id}','${t.title.replace(/'/g,"\\'")}')">✦ Noter</button>`:''}
+        ${myRating?`<span class="already-rated" style="color:${scoreColor(myRating.score).bg}">Tu as noté ${myRating.score}/10</span>`:''}
+        ${isOwn?`<span style="font-size:10px;color:var(--sub2)">Ton track</span>`:''}
+        ${avg?`<span class="feed-avg" style="color:${scoreColor(Math.round(parseFloat(avg))).bg}">Moy: ${avg}/10</span>`:''}
+      </div>
+      ${ratings.length?`<div class="feed-ratings">${ratingBadges}${ratings.length>5?`<span style="font-size:10px;color:var(--sub2)">+${ratings.length-5}</span>`:''}   </div>`:''}
+    </div>`;
+  }).join('');
+
+  // Charger les vrais grades des users
+  loadUserGradesForFeed(tracks);
+}
+
+async function loadUserGradesForFeed(tracks) {
+  const userIds=[...new Set(tracks.map(t=>t.user_id))];
+  const {data:users}=await sb.from('users').select('id,xp').in('id',userIds);
+  if(!users) return;
+  const xpMap={};
+  users.forEach(u=>xpMap[u.id]=u.xp||0);
+  tracks.forEach(t=>{
+    const card=document.getElementById('track-'+t.id);
+    if(!card) return;
+    const xp=xpMap[t.user_id]||0;
+    const g=getGrade(xp);
+    const vinyl=card.querySelector('.feed-vinyl');
+    if(vinyl) vinyl.innerHTML=vinylSVG(g.grade.vinylState,g.grade.color,40);
+    const gradeEl=card.querySelector('.feed-grade');
+    if(gradeEl) gradeEl.textContent=`${g.grade.name} ${g.sub} · ${t.type==='vocal'?'Track vocale':'Beat'}`;
+    // Border-left colorée selon le grade
+    card.style.borderLeftColor = g.grade.color;
+  });
+}
+
+// ═══ POSTER ═══
+async function postTrack() {
+  const title=document.getElementById('postTitle').value.trim();
+  const type=document.getElementById('postType').value;
+  const link=document.getElementById('postLink').value.trim();
+  const note=document.getElementById('postNote').value.trim();
+  if(!title){showToast('Donne un titre au track');return;}
+  if(!link){showToast('Ajoute un lien pour que les gens puissent écouter');return;}
+  const {error}=await sb.from('tracks').insert({user_id:currentUser.id,user_name:currentUser.name,title,type,link:link||null,note:note||null});
+  if(error){showToast('Erreur post');console.error('postTrack:', error.message);return;}
+  document.getElementById('postTitle').value='';
+  document.getElementById('postLink').value='';
+  document.getElementById('postNote').value='';
+  showToast('Track posté sur le fil !');
+  showPage('feed',document.querySelector('.snav'));
+}
+
+// ═══ NOTER ═══
+let rateTrackId=null, rateScore=null;
+
+function openRateModal(trackId,trackTitle) {
+  rateTrackId=trackId; rateScore=null;
+  document.getElementById('rateModalTitle').textContent=trackTitle;
+  document.getElementById('rateXpPreview').textContent='—';
+  renderRateScorePicker();
+  document.getElementById('rateModal').classList.add('active');
+}
+function closeRateModal(){ document.getElementById('rateModal').classList.remove('active'); rateTrackId=null; rateScore=null; }
+
+function renderRateScorePicker() {
+  const el=document.getElementById('rateScorePicker');
+  el.innerHTML='';
+  for(let i=1;i<=10;i++){
+    const btn=document.createElement('button');
+    btn.className='score-btn'+(rateScore===i?' selected':'');
+    btn.textContent=i;
+    if(rateScore===i){const c=scoreColor(i);btn.style.background=c.bg;btn.style.color=c.text;}
+    btn.onclick=()=>{rateScore=i;renderRateScorePicker();document.getElementById('rateXpPreview').textContent='+'+xpForScore(i)+' XP';};
+    el.appendChild(btn);
+  }
+}
+
+async function submitRating() {
+  if(!rateScore){showToast('Sélectionne une note');return;}
+  const xp=xpForScore(rateScore);
+  const {error:re}=await sb.from('ratings').insert({track_id:rateTrackId,user_id:currentUser.id,user_name:currentUser.name,score:rateScore,xp_earned:xp});
+  if(re){showToast(re.message.includes('unique')?'Tu as déjà noté ce track':'Erreur');return;}
+  // Update XP user
+  const newXp=(currentUser.xp||0)+xp;
+  const oldGrade=getGrade(currentUser.xp||0);
+  await sb.from('users').update({xp:newXp}).eq('id',currentUser.id);
+  currentUser.xp=newXp;
+  setCurrentUser(currentUser);
+  const newGrade=getGrade(newXp);
+  const gradeUp=newGrade.grade.id!==oldGrade.grade.id||newGrade.subIdx>oldGrade.subIdx;
+  closeRateModal();
+  if (gradeUp) {
+    setTimeout(() => showGradeUp(newGrade.grade, newGrade.sub), 300);
+  } else {
+    showToast(`+${xp} XP gagné !`);
+  }
+  renderFeed();
+  renderTopbar();
+}
+
+// ═══ PROFIL ═══
+async function renderProfile() {
+  const {data:u}=await sb.from('users').select('*').eq('id',currentUser.id).single();
+  if(!u) return;
+  currentUser=u; setCurrentUser(u);
+  const xp=u.xp||0;
+  const g=getGrade(xp);
+  const next=getNextThreshold(xp);
+  const [min]=g.grade.xpRanges[g.subIdx];
+  const pct=next?Math.round(((xp-min)/(next-min))*100):100;
+  document.getElementById('profileVinyl').innerHTML=vinylSVG(g.grade.vinylState,g.grade.color,110);
+  document.getElementById('profileGradeName').textContent=g.grade.name;
+  document.getElementById('profileGradeSub').textContent=g.sub;
+  document.getElementById('profileName').textContent=u.name;
+  document.getElementById('profileXpLabel').textContent=`${xp} XP total`;
+  document.getElementById('profileXpBar').style.width=pct+'%';
+  document.getElementById('profileXpBar').style.background=g.grade.color;
+  document.getElementById('xpCurrent').textContent=xp+' XP';
+  document.getElementById('xpNext').textContent=next?next+' XP → palier suivant':'⚡ Grade max';
+  // Stats
+  const {data:tracks}=await sb.from('tracks').select('id').eq('user_id',u.id);
+  const {data:ratings}=await sb.from('ratings').select('id').eq('user_id',u.id);
+  document.getElementById('statTracks').textContent=tracks?.length||0;
+  document.getElementById('statRatings').textContent=ratings?.length||0;
+  document.getElementById('statXP').textContent=xp;
+  // Mes tracks
+  const {data:myTracks}=await sb.from('tracks').select('*,ratings(*)').eq('user_id',u.id).order('created_at',{ascending:false});
+  const el=document.getElementById('profileTracksList');
+  el.innerHTML=myTracks?.length?myTracks.map(t=>{
+    const avg=t.ratings?.length?(t.ratings.reduce((a,r)=>a+r.score,0)/t.ratings.length).toFixed(1):null;
+    return `<div class="feed-card" style="margin-bottom:8px">
+      <div class="feed-track-title">${t.title}</div>
+      <div class="feed-track-type">${t.type==='vocal'?'Track vocale':'Beat'} · ${formatTime(t.created_at)}</div>
+      <div class="feed-actions">
+        ${t.link?`<a class="feed-link" href="${t.link}" target="_blank" rel="noopener">▶ Écouter</a>`:''}
+        ${avg?`<span style="font-size:12px;font-weight:600;color:${scoreColor(Math.round(parseFloat(avg))).bg}">Moy: ${avg}/10 (${t.ratings.length} notes)</span>`:'<span style="font-size:11px;color:var(--sub2)">Pas encore noté</span>'}
+      </div>
+    </div>`;
+  }).join(''):'<div class="empty"><div class="empty-icon">◈</div>Aucun track posté</div>';
+}
+
+// ═══ GRADES ═══
+function renderGrades() {
+  const xp=currentUser.xp||0;
+  const current=getGrade(xp);
+  document.getElementById('gradesGrid').innerHTML=GRADES.flatMap(g=>
+    g.subs.map((sub,si)=>{
+      const [min,max]=g.xpRanges[si];
+      const unlocked=xp>=min;
+      const isCurrent=g.id===current.grade.id&&sub===current.sub;
+      return `<div class="grade-card${unlocked?'':' locked'}">
+        <div class="grade-vinyl-sm">${vinylSVG(g.vinylState,unlocked?g.color:'#3a3a3a',56)}</div>
+        <div>
+          <div class="grade-card-name" style="color:${unlocked?g.color:'var(--sub2)'}">${g.name} ${sub}</div>
+          <div class="grade-card-sub">${g.desc}</div>
+          <div class="grade-card-range">${min} — ${max===Infinity?'∞':max} XP</div>
+          <div class="grade-card-status">${isCurrent?'<span class="badge-current">◉ Grade actuel</span>':unlocked?'<span class="badge-unlocked">✓ Débloqué</span>':'<span class="badge-locked">⊘ Verrouillé</span>'}</div>
+        </div>
+      </div>`;
+    })
+  ).join('');
+}
+
+// ═══ LEADERBOARD ═══
+async function renderLeaderboard() {
+  const el=document.getElementById('leaderboardList');
+  el.innerHTML='<div class="loading">CHARGEMENT...</div>';
+  const {data,error}=await sb.from('users').select('id,name,xp').order('xp',{ascending:false}).limit(50);
+  if(error){el.innerHTML='<div class="empty">Erreur</div>';return;}
+  const ranks = [
+    {cls:'gold',label:'🥇'},
+    {cls:'silver',label:'🥈'},
+    {cls:'bronze',label:'🥉'}
+  ];
+  el.innerHTML=data.map((u,i)=>{
+    const g=getGrade(u.xp||0);
+    const isMe=u.id===currentUser.id;
+    const topCls = i<3 ? `top${i+1}` : '';
+    const rankDisplay = i<3 ? `<span class="lb-rank ${ranks[i].cls}">${ranks[i].label}</span>` : `<span class="lb-rank normal">${i+1}</span>`;
+    return `<div class="lb-item${isMe?' me':''} ${topCls}">
+      ${rankDisplay}
+      <div class="lb-vinyl">${vinylSVG(g.grade.vinylState,g.grade.color,36)}</div>
+      <div class="lb-info"><div class="lb-name">${u.name}${isMe?' <span style="color:var(--sub2);font-size:10px">(toi)</span>':''}</div><div class="lb-grade">${g.grade.name} ${g.sub}</div></div>
+      <div class="lb-xp" style="color:${g.grade.color}">${u.xp||0} XP</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══ TOPBAR ═══
+function renderTopbar() {
+  const g=getGrade(currentUser.xp||0);
+  document.getElementById('topbarAvatar').innerHTML=vinylSVG(g.grade.vinylState,g.grade.color,28);
+  document.getElementById('topbarUsername').textContent=currentUser.name;
+}
+
+// ═══ UTILS ═══
+function formatTime(iso) {
+  const diff=Date.now()-new Date(iso).getTime();
+  const m=Math.floor(diff/60000),h=Math.floor(diff/3600000),d=Math.floor(diff/86400000);
+  if(d>0) return d+'j';
+  if(h>0) return h+'h';
+  if(m>0) return m+'min';
+  return 'à l\'instant';
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ═══ APP RENDER ═══
+function renderApp() {
+  renderTopbar();
+  renderFeed();
+}
+
+function showScreen(id) {
+  ['screen-intro','screen-login','screen-main'].forEach(s => {
+    document.getElementById(s).classList.remove('active');
+  });
+  document.getElementById(id).classList.add('active');
+}
+
+// ═══ INTRO ═══
+function enterApp() {
+  showScreen('screen-login');
+  loadUsers();
+}
+
+function initIntroVinyls() {
+  const grades = [
+    { state:'shattered', color:'#5a5a5a', label:'Broke Ass', size:52 },
+    { state:'cracked',   color:'#e05d1a', label:'SoundCloud', size:64 },
+    { state:'normal',    color:'#c8a96e', label:'SACEM', size:72 },
+    { state:'bronze',    color:'#1db954', label:'Spotify', size:64 },
+    { state:'gold',      color:'#c9a227', label:'King Von', size:52 },
+  ];
+  document.getElementById('introVinyls').innerHTML = grades.map(g =>
+    `<div class="intro-vinyl-item">
+      ${vinylSVG(g.state, g.color, g.size)}
+      <div class="intro-vinyl-label">${g.label}</div>
+    </div>`
+  ).join('');
+}
+
+// ═══ BOOT ═══
+async function boot() {
+  const saved = sessionStorage.getItem('nc_user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    const {data} = await sb.from('users').select('*').eq('id', currentUser.id).single();
+    if (data) { currentUser = data; setCurrentUser(data); }
+    showScreen('screen-main');
+    renderApp();
+  } else {
+    showScreen('screen-intro');
+    initIntroVinyls();
+  }
+}
+
+boot();
+</script>
+</body>
+</html>
